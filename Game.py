@@ -3,7 +3,6 @@ import Player
 from Deck import Deck
 from Const import MESSAGES
 import time
-
 import random
 
 
@@ -16,7 +15,7 @@ class Game:
         self.player_pos = None
         self.dealer = Player.Dealer()
         self.all_players_count = 1
-        self.deck = Deck()
+        self.deck = None
 
     @staticmethod
     def _ask_starting(message):
@@ -59,6 +58,7 @@ class Game:
             for _ in range(2):
                 card = self.deck.get_card()
                 player.take_card(card)
+            time.sleep(1)
 
         card = self.deck.get_card()
         self.dealer.take_card(card)
@@ -76,7 +76,8 @@ class Game:
         elif isinstance(player, Player.Bot):
             print('-----***-----')
             print(player.name, 'are fall!')
-        self.players.remove(player)
+            print('He has', player.full_points, 'points.')
+        # self.players.remove(player)
 
     def ask_cards(self):
         for player in self.players:
@@ -84,6 +85,7 @@ class Game:
             while player.ask_card():
                 card = self.deck.get_card()
                 player.take_card(card)
+                self.player.ace_value()
                 if isinstance(player, Player.Player) or isinstance(player, Player.Cardsharp):
                     player.print_cards()
 
@@ -92,8 +94,8 @@ class Game:
                 if is_stop:
                     if player.full_points > 21 or isinstance(player, Player.Player) or \
                             isinstance(player, Player.Cardsharp):
-                        self.remove_player(player)
-                    break
+                        # self.remove_player(player)
+                        break
 
     def check_winner(self):
         if self.dealer.full_points > 21:
@@ -144,7 +146,7 @@ class Game:
         self._launching()
 
         while True:
-
+            self.deck = Deck()
             # give first cards to the players
             self.first_descr()
 
@@ -168,6 +170,7 @@ class Game:
             self.clear_cards()
 
             if not self._ask_starting(MESSAGES.get('rerun')):
+
                 break
 
 
